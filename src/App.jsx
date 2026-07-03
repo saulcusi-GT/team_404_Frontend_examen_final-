@@ -1,7 +1,7 @@
 import './App.css'
 import Navbar from './components/Navbar/Navbar'
 import Hero from './components/Hero/Hero'
-import Historia from './components/Historia/Historia'
+import Departamento from './components/Departamento/Departamento'
 import Lugares from './components/Lugares/Lugares'
 import Gastronomia from './components/Gastronomia/Gastronomia'
 import Galeria from './components/Galeria/Galeria'
@@ -14,7 +14,7 @@ function App() {
       <Navbar />
       <main>
         <Hero />
-        <Historia />
+        <Departamento />
         <Lugares />
         <Gastronomia />
         <Galeria />

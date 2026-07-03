@@ -1,7 +1,177 @@
 .contacto {
-  background: var(--color-surface);
+  position: relative;
+  padding-top: 56px;
+  padding-bottom: 56px;
+  color: #ffffff;
+  background: linear-gradient(180deg, #171c20, #111416);
+  overflow: hidden;
+}
+
+.contacto::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(211, 159, 75, 0.08), transparent);
+  pointer-events: none;
 }
 
 .contacto__container {
-  min-height: 280px;
+  position: relative;
+  min-height: 240px;
+}
+
+.contacto__panel {
+  display: grid;
+  grid-template-columns: 0.9fr 1.15fr 1.55fr;
+  gap: 28px;
+  align-items: center;
+  padding: 32px 0;
+}
+
+.contacto__institution {
+  padding-right: 26px;
+  border-right: 1px solid rgba(216, 166, 78, 0.32);
+}
+
+.contacto__title {
+  width: fit-content;
+  margin: 0 0 18px;
+  padding-bottom: 8px;
+  color: #ffffff;
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  line-height: 1;
+  border-bottom: 3px solid #d6a44a;
+}
+
+.contacto__institution p {
+  margin: 0 0 11px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.contacto__details {
+  display: grid;
+  gap: 11px;
+  padding-right: 28px;
+  border-right: 1px solid rgba(216, 166, 78, 0.32);
+}
+
+.contacto__item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.contacto__icon {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  color: #d6a44a;
+  font-size: 0.72rem;
+  font-weight: 900;
+  border: 1px solid rgba(216, 166, 78, 0.55);
+  border-radius: 4px;
+}
+
+.contacto__item h3 {
+  margin: 0 0 3px;
+  color: #ffffff;
+  font-size: 0.82rem;
+}
+
+.contacto__item p,
+.contacto__item a {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  text-decoration: none;
+}
+
+.contacto__item a:hover,
+.contacto__item a:focus-visible {
+  color: #f2cf80;
+}
+
+.contacto__social {
+  min-width: 0;
+}
+
+.contacto__social-links {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.contacto__social-links a {
+  min-height: 92px;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  color: rgba(255, 255, 255, 0.84);
+  text-align: center;
+  text-decoration: none;
+  border-left: 1px solid rgba(216, 166, 78, 0.28);
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.contacto__social-links span {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  color: #111416;
+  font-size: 0.76rem;
+  font-weight: 900;
+  background: #d6a44a;
+  border-radius: 50%;
+}
+
+.contacto__social-links strong {
+  color: #ffffff;
+  font-size: 0.82rem;
+}
+
+.contacto__social-links small {
+  color: rgba(255, 255, 255, 0.63);
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+.contacto__social-links a:hover,
+.contacto__social-links a:focus-visible {
+  color: #ffffff;
+  background: rgba(214, 164, 74, 0.08);
+}
+
+@media (max-width: 980px) {
+  .contacto__panel {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    padding: 10px 0;
+  }
+
+  .contacto__institution,
+  .contacto__details {
+    padding-right: 0;
+    padding-bottom: 22px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(216, 166, 78, 0.28);
+  }
+}
+
+@media (max-width: 560px) {
+  .contacto__social-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contacto__social-links a {
+    min-height: 86px;
+  }
 }

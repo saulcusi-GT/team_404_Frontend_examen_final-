@@ -75,6 +75,11 @@
   color: #ffb4a8;
 }
 
+.departamento__success {
+  margin: 0;
+  color: #bff3d1;
+}
+
 .departamento__actions {
   display: flex;
   flex-wrap: wrap;

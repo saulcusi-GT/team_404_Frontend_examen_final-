@@ -46,7 +46,7 @@ function Lugares() {
 
   if (loading || error || lugares.length === 0) {
     return (
-      <section className="lugares">
+      <section className="lugares" id="lugares">
         <div className="lugares__container">
           <h2 className="section__title">Lugares Turisticos</h2>
           <p className="lugares__status">
@@ -60,7 +60,7 @@ function Lugares() {
   const lugar = lugares[actual]
 
   return (
-    <section className="lugares">
+    <section className="lugares" id="lugares">
       <div className="lugares__container">
         <h2 className="section__title">Lugares Turisticos</h2>
 

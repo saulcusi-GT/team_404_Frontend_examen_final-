@@ -56,7 +56,7 @@ function Galeria() {
 
   if (loading || error || imagenes.length === 0) {
     return (
-      <section className="galeria">
+      <section className="galeria" id="galeria">
         <div className="galeria__container">
           <h2 className="section__title">Potosi Patrimonial y Natural</h2>
           <p className="galeria__status">
@@ -70,7 +70,7 @@ function Galeria() {
   const visibles = imagenes.slice(actual, actual + 3)
 
   return (
-    <section className="galeria">
+    <section className="galeria" id="galeria">
       <div className="galeria__container">
         <h2 className="section__title">Potosi Patrimonial y Natural</h2>
 

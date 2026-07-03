@@ -16,6 +16,7 @@ function Departamento() {
   const [atractivoForm, setAtractivoForm] = useState(emptyAtractivoForm)
   const [savingAtractivo, setSavingAtractivo] = useState(false)
   const [atractivoError, setAtractivoError] = useState(null)
+  const [atractivoSuccess, setAtractivoSuccess] = useState(null)
 
   const atractivos = departamento?.atractivos
     ? [...departamento.atractivos].sort((a, b) => a.orden - b.orden)
@@ -29,6 +30,7 @@ function Departamento() {
     setAtractivoForm({ nombre: '', descripcion: '', orden: atractivos.length + 1 })
     setEditingAtractivoId(null)
     setAtractivoError(null)
+    setAtractivoSuccess(null)
     setFormMode('create')
   }
 
@@ -40,6 +42,7 @@ function Departamento() {
     })
     setEditingAtractivoId(atractivo.id)
     setAtractivoError(null)
+    setAtractivoSuccess(null)
     setFormMode('edit')
   }
 
@@ -60,10 +63,14 @@ function Departamento() {
 
     setSavingAtractivo(true)
     setAtractivoError(null)
+    setAtractivoSuccess(null)
 
     try {
       if (formMode === 'edit') {
-        const res = await api.put(`/departamento/atractivos/${editingAtractivoId}`, atractivoForm)
+        const res = await api.put(
+          `/departamento/${departamento.id}/atractivos/${editingAtractivoId}`,
+          atractivoForm
+        )
         const updatedDepartamento = res.data.data
 
         if (updatedDepartamento?.atractivos) {
@@ -75,43 +82,34 @@ function Departamento() {
             )
           )
         }
+        setAtractivoSuccess('Atractivo actualizado correctamente.')
       } else {
         const res = await api.post(`/departamento/${departamento.id}/atractivos`, atractivoForm)
         setDepartamento(res.data.data)
+        setAtractivoSuccess('Atractivo agregado correctamente.')
       }
 
       cancelAtractivoForm()
     } catch {
-      if (formMode === 'edit') {
-        updateAtractivos(
-          atractivos.map((atractivo) =>
-            atractivo.id === editingAtractivoId ? { ...atractivo, ...atractivoForm } : atractivo
-          )
-        )
-        cancelAtractivoForm()
-        setAtractivoError('Cambio aplicado solo en pantalla: el backend no respondio al editar.')
-      } else {
-        updateAtractivos([
-          ...atractivos,
-          {
-            ...atractivoForm,
-            id: `temp-${atractivos.length + 1}`,
-          },
-        ])
-        cancelAtractivoForm()
-        setAtractivoError('Atractivo agregado solo en pantalla: el backend no respondio.')
-      }
+      setAtractivoError(
+        formMode === 'edit'
+          ? 'No se pudo editar el atractivo. Intenta nuevamente.'
+          : 'No se pudo guardar el atractivo. Intenta nuevamente.'
+      )
     } finally {
       setSavingAtractivo(false)
     }
   }
 
   async function handleDeleteAtractivo(atractivoId) {
+    if (!departamento) return
+
     setSavingAtractivo(true)
     setAtractivoError(null)
+    setAtractivoSuccess(null)
 
     try {
-      const res = await api.delete(`/departamento/atractivos/${atractivoId}`)
+      const res = await api.delete(`/departamento/${departamento.id}/atractivos/${atractivoId}`)
       const updatedDepartamento = res.data.data
 
       if (updatedDepartamento?.atractivos) {
@@ -123,19 +121,16 @@ function Departamento() {
       if (editingAtractivoId === atractivoId) {
         cancelAtractivoForm()
       }
+      setAtractivoSuccess('Atractivo eliminado correctamente.')
     } catch {
-      updateAtractivos(atractivos.filter((atractivo) => atractivo.id !== atractivoId))
-      if (editingAtractivoId === atractivoId) {
-        cancelAtractivoForm()
-      }
-      setAtractivoError('Atractivo eliminado solo en pantalla: el backend no respondio.')
+      setAtractivoError('No se pudo eliminar el atractivo. Intenta nuevamente.')
     } finally {
       setSavingAtractivo(false)
     }
   }
 
   return (
-    <section className="section departamento" id="departamento">
+    <section className="section departamento" id="historia">
       <div className="section__container departamento__container">
         {loading && <p className="section__placeholder departamento__placeholder">Cargando...</p>}
         {error && !departamento && (
@@ -218,6 +213,7 @@ function Departamento() {
                 </label>
 
                 {atractivoError && <p className="departamento__error">{atractivoError}</p>}
+                {atractivoSuccess && <p className="departamento__success">{atractivoSuccess}</p>}
 
                 <div className="departamento__actions">
                   <button type="submit" className="btn btn--light" disabled={savingAtractivo}>
@@ -240,6 +236,7 @@ function Departamento() {
             ) : (
               <>
                 {atractivoError && <p className="departamento__error">{atractivoError}</p>}
+                {atractivoSuccess && <p className="departamento__success">{atractivoSuccess}</p>}
                 <div className="departamento__actions">
                   <button type="button" className="btn btn--light" onClick={startAddAtractivo}>
                     Agregar atractivo

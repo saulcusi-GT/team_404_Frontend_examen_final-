@@ -100,6 +100,10 @@
   list-style: none;
 }
 
+.navbar__links li {
+  flex: none;
+}
+
 .navbar__links a {
   position: relative;
   display: inline-flex;
@@ -153,5 +157,24 @@
   .navbar__links a {
     padding: 8px 0;
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar__container {
+    width: min(100% - 20px, 1120px);
+  }
+
+  .navbar__brand-text small {
+    font-size: 0.62rem;
+  }
+
+  .navbar__links {
+    overflow-x: auto;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 18px;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
   }
 }

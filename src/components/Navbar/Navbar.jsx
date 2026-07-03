@@ -5,13 +5,19 @@ function Navbar() {
     <header className="navbar">
       <nav className="navbar__container" aria-label="Navegacion principal">
         <a className="navbar__brand" href="#inicio">
-          Turismo
+          <span className="navbar__brand-mark" aria-hidden="true">
+            <span></span>
+          </span>
+          <span className="navbar__brand-text">
+            <strong>POTOSI</strong>
+            <small>Turismo patrimonial</small>
+          </span>
         </a>
 
-        {/* -----------------------------------
-            AQUI DESARROLLARA EL INTEGRANTE 1
-            ----------------------------------- */}
         <ul className="navbar__links">
+          <li>
+            <a href="#inicio">Inicio</a>
+          </li>
           <li>
             <a href="#historia">Historia</a>
           </li>

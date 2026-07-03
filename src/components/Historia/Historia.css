@@ -1,0 +1,7 @@
+.historia {
+  background: var(--color-surface);
+}
+
+.historia__container {
+  min-height: 280px;
+}

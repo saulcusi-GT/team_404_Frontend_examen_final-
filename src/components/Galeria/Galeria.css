@@ -1,0 +1,7 @@
+.galeria {
+  background: var(--color-surface-alt);
+}
+
+.galeria__container {
+  min-height: 360px;
+}

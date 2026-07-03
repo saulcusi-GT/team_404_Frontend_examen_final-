@@ -1,0 +1,7 @@
+.contacto {
+  background: var(--color-surface);
+}
+
+.contacto__container {
+  min-height: 280px;
+}

@@ -1,0 +1,7 @@
+.lugares {
+  background: var(--color-surface-alt);
+}
+
+.lugares__container {
+  min-height: 320px;
+}

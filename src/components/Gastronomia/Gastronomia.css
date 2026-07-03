@@ -1,0 +1,7 @@
+.gastronomia {
+  background: var(--color-surface);
+}
+
+.gastronomia__container {
+  min-height: 320px;
+}

@@ -11,7 +11,8 @@ function Departamento() {
     []
   )
 
-  const [isAddingAtractivo, setIsAddingAtractivo] = useState(false)
+  const [formMode, setFormMode] = useState(null)
+  const [editingAtractivoId, setEditingAtractivoId] = useState(null)
   const [atractivoForm, setAtractivoForm] = useState(emptyAtractivoForm)
   const [savingAtractivo, setSavingAtractivo] = useState(false)
   const [atractivoError, setAtractivoError] = useState(null)
@@ -20,14 +21,31 @@ function Departamento() {
     ? [...departamento.atractivos].sort((a, b) => a.orden - b.orden)
     : []
 
-  function startAddAtractivo() {
-    setAtractivoForm({ nombre: '', descripcion: '', orden: atractivos.length + 1 })
-    setAtractivoError(null)
-    setIsAddingAtractivo(true)
+  function updateAtractivos(nextAtractivos) {
+    setDepartamento((prev) => (prev ? { ...prev, atractivos: nextAtractivos } : prev))
   }
 
-  function cancelAddAtractivo() {
-    setIsAddingAtractivo(false)
+  function startAddAtractivo() {
+    setAtractivoForm({ nombre: '', descripcion: '', orden: atractivos.length + 1 })
+    setEditingAtractivoId(null)
+    setAtractivoError(null)
+    setFormMode('create')
+  }
+
+  function startEditAtractivo(atractivo) {
+    setAtractivoForm({
+      nombre: atractivo.nombre || '',
+      descripcion: atractivo.descripcion || '',
+      orden: atractivo.orden || atractivos.length,
+    })
+    setEditingAtractivoId(atractivo.id)
+    setAtractivoError(null)
+    setFormMode('edit')
+  }
+
+  function cancelAtractivoForm() {
+    setFormMode(null)
+    setEditingAtractivoId(null)
     setAtractivoError(null)
   }
 
@@ -44,11 +62,73 @@ function Departamento() {
     setAtractivoError(null)
 
     try {
-      const res = await api.post(`/departamento/${departamento.id}/atractivos`, atractivoForm)
-      setDepartamento(res.data.data)
-      cancelAddAtractivo()
+      if (formMode === 'edit') {
+        const res = await api.put(`/departamento/atractivos/${editingAtractivoId}`, atractivoForm)
+        const updatedDepartamento = res.data.data
+
+        if (updatedDepartamento?.atractivos) {
+          setDepartamento(updatedDepartamento)
+        } else {
+          updateAtractivos(
+            atractivos.map((atractivo) =>
+              atractivo.id === editingAtractivoId ? { ...atractivo, ...atractivoForm } : atractivo
+            )
+          )
+        }
+      } else {
+        const res = await api.post(`/departamento/${departamento.id}/atractivos`, atractivoForm)
+        setDepartamento(res.data.data)
+      }
+
+      cancelAtractivoForm()
     } catch {
-      setAtractivoError('No se pudo guardar el atractivo.')
+      if (formMode === 'edit') {
+        updateAtractivos(
+          atractivos.map((atractivo) =>
+            atractivo.id === editingAtractivoId ? { ...atractivo, ...atractivoForm } : atractivo
+          )
+        )
+        cancelAtractivoForm()
+        setAtractivoError('Cambio aplicado solo en pantalla: el backend no respondio al editar.')
+      } else {
+        updateAtractivos([
+          ...atractivos,
+          {
+            ...atractivoForm,
+            id: `temp-${atractivos.length + 1}`,
+          },
+        ])
+        cancelAtractivoForm()
+        setAtractivoError('Atractivo agregado solo en pantalla: el backend no respondio.')
+      }
+    } finally {
+      setSavingAtractivo(false)
+    }
+  }
+
+  async function handleDeleteAtractivo(atractivoId) {
+    setSavingAtractivo(true)
+    setAtractivoError(null)
+
+    try {
+      const res = await api.delete(`/departamento/atractivos/${atractivoId}`)
+      const updatedDepartamento = res.data.data
+
+      if (updatedDepartamento?.atractivos) {
+        setDepartamento(updatedDepartamento)
+      } else {
+        updateAtractivos(atractivos.filter((atractivo) => atractivo.id !== atractivoId))
+      }
+
+      if (editingAtractivoId === atractivoId) {
+        cancelAtractivoForm()
+      }
+    } catch {
+      updateAtractivos(atractivos.filter((atractivo) => atractivo.id !== atractivoId))
+      if (editingAtractivoId === atractivoId) {
+        cancelAtractivoForm()
+      }
+      setAtractivoError('Atractivo eliminado solo en pantalla: el backend no respondio.')
     } finally {
       setSavingAtractivo(false)
     }
@@ -60,7 +140,7 @@ function Departamento() {
         {loading && <p className="section__placeholder departamento__placeholder">Cargando...</p>}
         {error && !departamento && (
           <p className="section__placeholder departamento__placeholder">
-            No se pudo cargar la información del backend. Verifica que esté corriendo en{' '}
+            No se pudo cargar la informacion del backend. Verifica que este corriendo en{' '}
             {import.meta.env.VITE_API_URL}.
           </p>
         )}
@@ -74,17 +154,37 @@ function Departamento() {
               {atractivos.map((atractivo) => (
                 <li key={atractivo.id} className="departamento__item">
                   <span className="departamento__check" aria-hidden="true">
-                    ✓
+                    &#10003;
                   </span>
-                  <p className="departamento__item-texto">
-                    <strong>{atractivo.nombre}, </strong>
-                    {atractivo.descripcion}
-                  </p>
+                  <div className="departamento__item-content">
+                    <p className="departamento__item-texto">
+                      <strong>{atractivo.nombre}, </strong>
+                      {atractivo.descripcion}
+                    </p>
+                    <div className="departamento__item-actions">
+                      <button
+                        type="button"
+                        className="btn btn--small btn--ghost"
+                        onClick={() => startEditAtractivo(atractivo)}
+                        disabled={savingAtractivo}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn--small btn--danger"
+                        onClick={() => handleDeleteAtractivo(atractivo.id)}
+                        disabled={savingAtractivo}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
 
-            {isAddingAtractivo ? (
+            {formMode ? (
               <form className="departamento__form" onSubmit={handleAtractivoSubmit}>
                 <label>
                   Nombre
@@ -121,12 +221,16 @@ function Departamento() {
 
                 <div className="departamento__actions">
                   <button type="submit" className="btn btn--light" disabled={savingAtractivo}>
-                    {savingAtractivo ? 'Guardando...' : 'Agregar'}
+                    {savingAtractivo
+                      ? 'Guardando...'
+                      : formMode === 'edit'
+                        ? 'Guardar cambios'
+                        : 'Agregar'}
                   </button>
                   <button
                     type="button"
                     className="btn btn--ghost"
-                    onClick={cancelAddAtractivo}
+                    onClick={cancelAtractivoForm}
                     disabled={savingAtractivo}
                   >
                     Cancelar
@@ -134,11 +238,14 @@ function Departamento() {
                 </div>
               </form>
             ) : (
-              <div className="departamento__actions">
-                <button type="button" className="btn btn--light" onClick={startAddAtractivo}>
-                  Agregar atractivo
-                </button>
-              </div>
+              <>
+                {atractivoError && <p className="departamento__error">{atractivoError}</p>}
+                <div className="departamento__actions">
+                  <button type="button" className="btn btn--light" onClick={startAddAtractivo}>
+                    Agregar atractivo
+                  </button>
+                </div>
+              </>
             )}
           </>
         )}

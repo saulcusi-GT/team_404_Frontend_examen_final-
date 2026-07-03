@@ -9,6 +9,12 @@
     margin: auto;
 }
 
+.lugares__status {
+    text-align: center;
+    color: #555;
+    font-size: 1.1rem;
+}
+
 .section__title {
     text-align: center;
     font-size: 3rem;
@@ -149,9 +155,13 @@
 
     border-radius: 50%;
 
+    border: 0;
+
     background: #bdbdbd;
 
     cursor: pointer;
+
+    padding: 0;
 
     transition: .3s;
 
